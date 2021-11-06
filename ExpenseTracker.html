@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            color:blueviolet;
+            font-weight: bold;
+        }
+    </style>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+    <title>Expense Tracker</title>
+
+</head>
+<body>
+    <h2 style="text-decoration: underline; text-align: center">Expense Tracker Dapp (Using HTML & CSS)</h2>
+    
+    <div style="margin-left: 30%">    
+        <div>
+            <h3 style="text-decoration: underline">BALANCE</h3>
+            <div style="display: flex;">   
+            <button style=" color: #fff; background-color: #007bbf; height: 30px; width:125px"  onclick="upbal();">Update Balance:</button>   
+            <h2 style="margin:2px 20px" id="balance"></h2> 
+            </div>   
+        </div> <br>
+        <div>
+            <h3 style="text-decoration: underline" >INCOME</h3>
+            <div style="display: flex;">   
+            <button style=" color: #fff; background-color: #007bbf; height: 30px; width:125px"  onclick="upinc();">Update Income:</button>   
+            <h2 style="margin:2px 20px" id="income"></h2> 
+            </div>   
+        </div><br>
+        <div>
+            <h3 style="text-decoration: underline" >EXPENSE</h3>
+            <div style="display: flex;">   
+            <button style=" color: #fff; background-color: #007bbf; height: 30px; width:125px"  onclick="upexp();">Update Expense:</button>   
+            <h2 style="margin:2px 20px" id="expense"></h2> 
+            </div>   <br>
+        <div>
+            <h3 style="text-decoration: underline">ADD INCOME</h3>
+            <!-- <label for="one">Type</label>
+            <input type="text" id="one"> -->
+            Type: <input id="one"></textbox>
+            <!-- <label for="two">Value</label>
+            <input type="number" id="two"> -->
+            Value: <input id="two"></numberbox>
+            <button style=" color: #fff; background-color: #007bbf; height: 20px; width:80px" onclick="addinc();">Click</button>
+        </div>
+        <div>
+            <h3 style="text-decoration: underline">ADD EXPENSE</h3>
+            <label for="three">Type</label>
+            <input type="text" id="three">
+            <label for="four">Value</label>
+            <input type="number" id="four">
+            <button style=" color: #fff; background-color: #007bbf; height: 20px; width:80px" onclick="addexp();">Click</button>
+        </div> <br>
+        <div >
+            <h3 style="text-decoration: underline">Tranasaction Details</h3>
+            <div style="display: flex;"></div>
+            <button style=" color: #fff; background-color: #007bbf; height: 30px; width:125px" onclick="showTrans();">Update Details</button>  
+            <h6 style="margin:2px 20px" id="tranx"></h6> 
+            </div>   
+        </div>
+    </div>
+
+    <script>
+        const contractAddress= '0x17733643348050dAcA3a4c881821cc045cAbfF67';
+        const contractABI = [
+	{
+		"inputs": [],
+		"name": "Balance",
+		"outputs": [
+			{
+				"internalType": "int256",
+				"name": "",
+				"type": "int256"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "int256",
+				"name": "_expense",
+				"type": "int256"
+			},
+			{
+				"internalType": "string",
+				"name": "_cat",
+				"type": "string"
+			}
+		],
+		"name": "Expense",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "int256",
+				"name": "_income",
+				"type": "int256"
+			},
+			{
+				"internalType": "string",
+				"name": "_cat",
+				"type": "string"
+			}
+		],
+		"name": "Income",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "showExpense",
+		"outputs": [
+			{
+				"internalType": "int256",
+				"name": "",
+				"type": "int256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "showIncome",
+		"outputs": [
+			{
+				"internalType": "int256",
+				"name": "",
+				"type": "int256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "transactions",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "Type",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "cat",
+				"type": "string"
+			},
+			{
+				"internalType": "int256",
+				"name": "amount",
+				"type": "int256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "tranxCount",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_index",
+				"type": "uint256"
+			}
+		],
+		"name": "tranxDetails",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "_id",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "_Type",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_Cat",
+				"type": "string"
+			},
+			{
+				"internalType": "int256",
+				"name": "_amount",
+				"type": "int256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+]
+        let bal = document.getElementById('balance');
+        let inc = document.getElementById('income');
+        let exp = document.getElementById('expense');
+        let tranx = document.getElementById('tranx');
+        let Transaction = [];
+        
+        async function loadWeb3(){
+            if(window.ethereum){
+                window.web3 = new Web3(window.ethereum);
+                window.ethereum.enable();
+            }
+        }
+
+        async function loadContract(){
+            return await new window.web3.eth.Contract(contractABI, contractAddress);
+        }
+        
+        async function upbal() {
+            let a = await window.contract.methods.Balance().call();
+            bal.innerHTML = a;
+        }
+
+        async function upinc() {
+            let a = await window.contract.methods.showIncome().call();
+            inc.innerHTML = a;
+        }
+
+        async function upexp() {
+            let a = await window.contract.methods.showExpense().call();
+            exp.innerHTML = a;
+        }
+
+        async function addinc() {
+            await window.contract.methods.Income(document.getElementById('two').value, document.getElementById('one').value).send( {from: '0x9832a19981655913E13539A1Ef86e63451e948D5'})
+        }
+
+        async function addexp() {
+            await window.contract.methods.Expense(document.getElementById('four').value, document.getElementById('three').value).send( {from: '0x9832a19981655913E13539A1Ef86e63451e948D5'})
+        }
+
+        async function showTrans() {
+            let a = await window.contract.methods.tranxCount().call();
+            for (let i = 0; i < a; i++) {
+            Transaction = await window.contract.methods.tranxDetails(i).call();
+            tranx.innerHTML += "<h5>"+" Transaction ID: " + Transaction[0] + " ,Type: "+Transaction[1]+" ,Category: " + Transaction[2] + " ,Amount: "+ Transaction[3] + "</h5> "+ "<br />" ;
+            }
+        }
+
+        async function load() {
+            await loadWeb3();
+            window.contract = await loadContract();
+        }
+        
+        load();
+
+    </script>
+ 
+</body>
+</html>
